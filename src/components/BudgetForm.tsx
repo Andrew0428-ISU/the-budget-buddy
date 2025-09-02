@@ -105,12 +105,12 @@ export const BudgetForm = ({ onBudgetGenerated }: BudgetFormProps) => {
 
               <div>
                 <Label htmlFor="textbooks" className="text-base font-medium">
-                  Textbooks/Supplies
+                  Insurance
                 </Label>
                 <Input
                   id="textbooks"
                   type="number"
-                  placeholder="e.g., 150"
+                  placeholder="e.g., 100"
                   value={criteria.textbooks || ""}
                   onChange={(e) => updateCriteria("textbooks", e.target.value)}
                   className="mt-1"
