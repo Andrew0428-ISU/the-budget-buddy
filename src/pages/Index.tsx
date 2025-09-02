@@ -42,7 +42,7 @@ const Index = () => {
               
               <div className="space-y-4">
                 <h1 className="text-4xl md:text-6xl font-bold bg-gradient-hero bg-clip-text text-transparent">
-                  College Budget Builder
+                  The Budget Buddy
                 </h1>
                 <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
                   Take control of your finances! Enter your income and expenses to get a personalized 
