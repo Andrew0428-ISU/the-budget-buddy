@@ -30,7 +30,7 @@ export const BudgetResults = ({ criteria, onBack }: BudgetResultsProps) => {
   const budgetCategories = [
     { name: "Housing/Rent", amount: criteria.housing, type: "fixed" as const },
     { name: "Food/Meals", amount: criteria.mealPlan, type: "fixed" as const },
-    { name: "Textbooks/Supplies", amount: criteria.textbooks, type: "fixed" as const },
+    { name: "Insurance", amount: criteria.textbooks, type: "fixed" as const },
     { name: "Transportation", amount: criteria.transportation, type: "fixed" as const },
     { name: "Entertainment", amount: Math.round(availableForDiscretionary * 0.3), type: "flexible" as const },
     { name: "Personal Care", amount: Math.round(availableForDiscretionary * 0.15), type: "flexible" as const },
