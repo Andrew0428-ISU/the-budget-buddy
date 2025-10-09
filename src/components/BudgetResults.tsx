@@ -49,6 +49,24 @@ export const BudgetResults = ({ criteria, onBack }: BudgetResultsProps) => {
     "Use campus resources like the gym instead of paid memberships"
   ];
 
+  const localRecommendations = {
+    restaurants: [
+      { name: "Medici", description: "Affordable pizza and sandwiches, student favorite", price: "$" },
+      { name: "Avanti's", description: "Italian comfort food, great for groups", price: "$$" },
+      { name: "Destihl", description: "Brewpub with creative food and craft beer", price: "$$" },
+      { name: "Blaze Pizza", description: "Build-your-own pizza, quick and budget-friendly", price: "$" },
+      { name: "Epiphany Farms", description: "Farm-to-table, perfect for special occasions", price: "$$$" }
+    ],
+    entertainment: [
+      { name: "The Planetarium", description: "Free ISU planetarium shows", price: "Free" },
+      { name: "Downtown Bloomington", description: "Shops, galleries, and weekend events", price: "Varies" },
+      { name: "Constitution Trail", description: "Biking and walking path through both cities", price: "Free" },
+      { name: "The Castle Theatre", description: "Historic venue for concerts and comedy shows", price: "$$" },
+      { name: "Grady's Family Fun Park", description: "Mini golf, go-karts, and arcade", price: "$$" },
+      { name: "ISU Recreation Center", description: "State-of-the-art gym included with tuition", price: "Free" }
+    ]
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
@@ -160,6 +178,47 @@ export const BudgetResults = ({ criteria, onBack }: BudgetResultsProps) => {
           </div>
         </CardContent>
       </Card>
+
+      {/* ISU Local Recommendations */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card className="shadow-soft">
+          <CardHeader>
+            <CardTitle>🍕 Places to Eat Near ISU</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {localRecommendations.restaurants.map((place, index) => (
+                <div key={index} className="p-3 bg-muted rounded-lg">
+                  <div className="flex justify-between items-start mb-1">
+                    <h4 className="font-semibold">{place.name}</h4>
+                    <Badge variant="outline" className="text-xs">{place.price}</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{place.description}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="shadow-soft">
+          <CardHeader>
+            <CardTitle>🎉 Entertainment & Activities</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {localRecommendations.entertainment.map((place, index) => (
+                <div key={index} className="p-3 bg-muted rounded-lg">
+                  <div className="flex justify-between items-start mb-1">
+                    <h4 className="font-semibold">{place.name}</h4>
+                    <Badge variant="outline" className="text-xs">{place.price}</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{place.description}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {budgetHealth === "warning" && (
         <Card className="border-destructive shadow-soft">
