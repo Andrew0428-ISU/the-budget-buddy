@@ -11,6 +11,7 @@ interface BudgetCriteria {
   textbooks: number;
   transportation: number;
   savingsGoal: number;
+  location: string;
 }
 
 const Index = () => {
