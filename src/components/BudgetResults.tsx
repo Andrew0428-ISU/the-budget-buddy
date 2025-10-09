@@ -12,7 +12,6 @@ interface BudgetCriteria {
   textbooks: number;
   transportation: number;
   savingsGoal: number;
-  location: string;
 }
 
 interface BudgetResultsProps {
@@ -50,22 +49,21 @@ export const BudgetResults = ({ criteria, onBack }: BudgetResultsProps) => {
     "Use campus resources like the gym instead of paid memberships"
   ];
 
-  // Generic recommendations - in a production app, these would come from a location-based API
   const localRecommendations = {
     restaurants: [
-      { name: "Local Pizza Place", description: "Affordable pizza and casual dining", price: "$" },
-      { name: "Downtown Cafe", description: "Coffee shop with sandwiches and pastries", price: "$" },
-      { name: "Family Restaurant", description: "Comfort food at reasonable prices", price: "$$" },
-      { name: "Fast Casual Spot", description: "Quick service, build-your-own meals", price: "$" },
-      { name: "Special Occasion Dining", description: "Upscale restaurant for celebrations", price: "$$$" }
+      { name: "Medici", description: "Affordable pizza and sandwiches, student favorite", price: "$" },
+      { name: "Avanti's", description: "Italian comfort food, great for groups", price: "$$" },
+      { name: "Destihl", description: "Brewpub with creative food and craft beer", price: "$$" },
+      { name: "Blaze Pizza", description: "Build-your-own pizza, quick and budget-friendly", price: "$" },
+      { name: "Epiphany Farms", description: "Farm-to-table, perfect for special occasions", price: "$$$" }
     ],
     entertainment: [
-      { name: "Local Park", description: "Free outdoor activities and walking trails", price: "Free" },
-      { name: "Downtown Area", description: "Shopping, galleries, and local events", price: "Varies" },
-      { name: "Community Center", description: "Fitness facilities and recreation programs", price: "$" },
-      { name: "Movie Theater", description: "Latest films and matinee discounts", price: "$$" },
-      { name: "Entertainment Complex", description: "Bowling, arcade, and activities", price: "$$" },
-      { name: "Public Library", description: "Free events, books, and community programs", price: "Free" }
+      { name: "The Planetarium", description: "Free ISU planetarium shows", price: "Free" },
+      { name: "Downtown Bloomington", description: "Shops, galleries, and weekend events", price: "Varies" },
+      { name: "Constitution Trail", description: "Biking and walking path through both cities", price: "Free" },
+      { name: "The Castle Theatre", description: "Historic venue for concerts and comedy shows", price: "$$" },
+      { name: "Grady's Family Fun Park", description: "Mini golf, go-karts, and arcade", price: "$$" },
+      { name: "ISU Recreation Center", description: "State-of-the-art gym included with tuition", price: "Free" }
     ]
   };
 
@@ -181,14 +179,11 @@ export const BudgetResults = ({ criteria, onBack }: BudgetResultsProps) => {
         </CardContent>
       </Card>
 
-      {/* Local Recommendations */}
+      {/* ISU Local Recommendations */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="shadow-soft">
           <CardHeader>
-            <CardTitle>🍕 Places to Eat in {criteria.location || "Your Area"}</CardTitle>
-            <p className="text-sm text-muted-foreground mt-1">
-              Explore local dining options on a budget
-            </p>
+            <CardTitle>🍕 Places to Eat Near ISU</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -208,9 +203,6 @@ export const BudgetResults = ({ criteria, onBack }: BudgetResultsProps) => {
         <Card className="shadow-soft">
           <CardHeader>
             <CardTitle>🎉 Entertainment & Activities</CardTitle>
-            <p className="text-sm text-muted-foreground mt-1">
-              Fun things to do near {criteria.location || "you"}
-            </p>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">

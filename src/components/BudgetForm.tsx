@@ -13,7 +13,6 @@ interface BudgetCriteria {
   textbooks: number;
   transportation: number;
   savingsGoal: number;
-  location: string;
 }
 
 interface BudgetFormProps {
@@ -29,7 +28,6 @@ export const BudgetForm = ({ onBudgetGenerated }: BudgetFormProps) => {
     textbooks: 0,
     transportation: 0,
     savingsGoal: 0,
-    location: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -40,7 +38,7 @@ export const BudgetForm = ({ onBudgetGenerated }: BudgetFormProps) => {
   const updateCriteria = (field: keyof BudgetCriteria, value: string) => {
     setCriteria(prev => ({
       ...prev,
-      [field]: field === "location" ? value : (parseFloat(value) || 0)
+      [field]: parseFloat(value) || 0
     }));
   };
 
@@ -57,25 +55,6 @@ export const BudgetForm = ({ onBudgetGenerated }: BudgetFormProps) => {
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
-            <div>
-              <Label htmlFor="location" className="text-base font-medium">
-                Your Location
-              </Label>
-              <Input
-                id="location"
-                type="text"
-                placeholder="e.g., Bloomington, IL"
-                value={criteria.location}
-                onChange={(e) => updateCriteria("location", e.target.value)}
-                className="mt-1"
-              />
-              <p className="text-sm text-muted-foreground mt-1">
-                City and state for local recommendations
-              </p>
-            </div>
-
-            <Separator />
-
             <div>
               <Label htmlFor="income" className="text-base font-medium">
                 Monthly Income
