@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { BudgetForm } from "@/components/BudgetForm";
 import { BudgetResults } from "@/components/BudgetResults";
-import budgetHero from "@/assets/budget-hero.jpg";
+import isuLogo from "@/assets/isu-redbird-logo.svg";
 
 interface BudgetCriteria {
   monthlyIncome: number;
@@ -31,13 +31,12 @@ const Index = () => {
           <div className="space-y-12">
             {/* Hero Section */}
             <div className="text-center space-y-6">
-              <div className="relative max-w-4xl mx-auto">
+              <div className="relative max-w-md mx-auto">
                 <img 
-                  src={budgetHero} 
-                  alt="College students managing their budget"
-                  className="w-full h-64 md:h-80 object-cover rounded-2xl shadow-soft"
+                  src={isuLogo} 
+                  alt="Illinois State University Redbird Logo"
+                  className="w-full h-48 object-contain"
                 />
-                <div className="absolute inset-0 bg-gradient-hero opacity-20 rounded-2xl" />
               </div>
               
               <div className="space-y-4">
