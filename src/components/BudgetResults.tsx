@@ -1,15 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, DollarSign, TrendingUp, AlertTriangle, MessageSquare } from "lucide-react";
 import { useBudgetFeedback } from "@/hooks/useBudgetFeedback";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect } from "react";
-import { Separator } from "@/components/ui/separator";
 
 interface BudgetCriteria {
   monthlyIncome: number;
