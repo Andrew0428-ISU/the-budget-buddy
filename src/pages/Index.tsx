@@ -1,6 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { BudgetForm } from "@/components/BudgetForm";
 import { BudgetResults } from "@/components/BudgetResults";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { useBudgetFeedback } from "@/hooks/useBudgetFeedback";
+import { LogOut, LogIn } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import isuLogo from "@/assets/isu-redbird-logo.svg";
 
 interface BudgetCriteria {
@@ -14,9 +20,39 @@ interface BudgetCriteria {
 }
 
 const Index = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [budgetCriteria, setBudgetCriteria] = useState<BudgetCriteria | null>(null);
+  const [user, setUser] = useState<any>(null);
+  const [session, setSession] = useState<any>(null);
+  const { previousFeedback } = useBudgetFeedback(user?.id);
+
+  useEffect(() => {
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+      }
+    );
+
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleBudgetGenerated = (criteria: BudgetCriteria) => {
+    // Apply adjustments from previous feedback if available
+    if (previousFeedback) {
+      toast({
+        title: "Previous feedback applied",
+        description: "We've adjusted your budget based on your last feedback",
+      });
+    }
     setBudgetCriteria(criteria);
   };
 
@@ -24,8 +60,34 @@ const Index = () => {
     setBudgetCriteria(null);
   };
 
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    toast({
+      title: "Signed out",
+      description: "You've been signed out successfully",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
+      {/* Auth Button */}
+      <div className="container mx-auto px-4 py-4 flex justify-end">
+        {user ? (
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-muted-foreground">{user.email}</span>
+            <Button variant="outline" size="sm" onClick={handleSignOut}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign Out
+            </Button>
+          </div>
+        ) : (
+          <Button variant="outline" size="sm" onClick={() => navigate("/auth")}>
+            <LogIn className="h-4 w-4 mr-2" />
+            Sign In
+          </Button>
+        )}
+      </div>
+
       <main className="container mx-auto px-4 py-8">
         {!budgetCriteria ? (
           <div className="space-y-12">

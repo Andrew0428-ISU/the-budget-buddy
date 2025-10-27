@@ -1,8 +1,15 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, DollarSign, TrendingUp, AlertTriangle } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { ArrowLeft, DollarSign, TrendingUp, AlertTriangle, MessageSquare } from "lucide-react";
+import { useBudgetFeedback } from "@/hooks/useBudgetFeedback";
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect } from "react";
+import { Separator } from "@/components/ui/separator";
 
 interface BudgetCriteria {
   monthlyIncome: number;
@@ -20,6 +27,27 @@ interface BudgetResultsProps {
 }
 
 export const BudgetResults = ({ criteria, onBack }: BudgetResultsProps) => {
+  const [userId, setUserId] = useState<string | undefined>();
+  const [feedbackText, setFeedbackText] = useState("");
+  const [showFeedbackForm, setShowFeedbackForm] = useState(false);
+  const { saveFeedback, isLoading: isSavingFeedback } = useBudgetFeedback(userId);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUserId(user?.id);
+    });
+  }, []);
+
+  const handleSaveFeedback = async () => {
+    if (feedbackText.trim()) {
+      const success = await saveFeedback(criteria, feedbackText);
+      if (success) {
+        setFeedbackText("");
+        setShowFeedbackForm(false);
+      }
+    }
+  };
+
   // Calculate budget breakdown
   const totalFixedExpenses = criteria.housing + criteria.mealPlan + criteria.textbooks + criteria.transportation;
   const remainingAfterFixed = criteria.monthlyIncome - totalFixedExpenses;
@@ -236,6 +264,70 @@ export const BudgetResults = ({ criteria, onBack }: BudgetResultsProps) => {
           </CardContent>
         </Card>
       )}
+
+      {/* Budget Feedback Section */}
+      <Card className="shadow-soft border-primary/20">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <MessageSquare className="h-5 w-5 text-primary" />
+              <CardTitle>Budget Feedback</CardTitle>
+            </div>
+            {!showFeedbackForm && (
+              <Button 
+                variant="outline"
+                onClick={() => setShowFeedbackForm(true)}
+              >
+                Add Feedback
+              </Button>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          {showFeedbackForm ? (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="feedback">How is this budget working for you?</Label>
+                <Textarea
+                  id="feedback"
+                  placeholder="Share your thoughts... e.g., 'I need more for entertainment' or 'Savings goal is too high'"
+                  value={feedbackText}
+                  onChange={(e) => setFeedbackText(e.target.value)}
+                  rows={4}
+                  className="resize-none"
+                />
+                <p className="text-sm text-muted-foreground">
+                  Your feedback will help adjust recommendations for your next budget
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={handleSaveFeedback}
+                  disabled={!feedbackText.trim() || isSavingFeedback}
+                  className="bg-gradient-primary"
+                >
+                  {isSavingFeedback ? "Saving..." : "Save Feedback"}
+                </Button>
+                <Button 
+                  variant="outline"
+                  onClick={() => {
+                    setShowFeedbackForm(false);
+                    setFeedbackText("");
+                  }}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-6 text-muted-foreground">
+              <p className="text-sm">
+                Share your experience with this budget to get better recommendations next time
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 };
