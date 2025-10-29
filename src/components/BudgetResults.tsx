@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, DollarSign, TrendingUp, AlertTriangle, MessageSquare } from "lucide-react";
+import { ArrowLeft, DollarSign, TrendingUp, AlertTriangle, MessageSquare, Star } from "lucide-react";
 import { useBudgetFeedback } from "@/hooks/useBudgetFeedback";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -28,6 +28,8 @@ interface BudgetResultsProps {
 export const BudgetResults = ({ criteria, onBack }: BudgetResultsProps) => {
   const [userId, setUserId] = useState<string | undefined>();
   const [feedbackText, setFeedbackText] = useState("");
+  const [rating, setRating] = useState<number>(0);
+  const [hoveredRating, setHoveredRating] = useState<number>(0);
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const { saveFeedback, isLoading: isSavingFeedback } = useBudgetFeedback(userId);
 
@@ -38,10 +40,11 @@ export const BudgetResults = ({ criteria, onBack }: BudgetResultsProps) => {
   }, []);
 
   const handleSaveFeedback = async () => {
-    if (feedbackText.trim()) {
-      const success = await saveFeedback(criteria, feedbackText);
+    if (feedbackText.trim() && rating > 0) {
+      const success = await saveFeedback(criteria, feedbackText, rating);
       if (success) {
         setFeedbackText("");
+        setRating(0);
         setShowFeedbackForm(false);
       }
     }
@@ -286,6 +289,37 @@ export const BudgetResults = ({ criteria, onBack }: BudgetResultsProps) => {
           {showFeedbackForm ? (
             <div className="space-y-4">
               <div className="space-y-2">
+                <Label>Rate your experience (1-5 stars)</Label>
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setRating(star)}
+                      onMouseEnter={() => setHoveredRating(star)}
+                      onMouseLeave={() => setHoveredRating(0)}
+                      className="transition-transform hover:scale-110 focus:outline-none"
+                    >
+                      <Star
+                        className={`h-8 w-8 ${
+                          star <= (hoveredRating || rating)
+                            ? "fill-primary text-primary"
+                            : "text-muted-foreground"
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+                {rating > 0 && (
+                  <p className="text-sm text-muted-foreground">
+                    You rated this {rating} out of 5 stars
+                  </p>
+                )}
+              </div>
+              
+              <Separator />
+              
+              <div className="space-y-2">
                 <Label htmlFor="feedback">How is this budget working for you?</Label>
                 <Textarea
                   id="feedback"
@@ -302,7 +336,7 @@ export const BudgetResults = ({ criteria, onBack }: BudgetResultsProps) => {
               <div className="flex gap-2">
                 <Button 
                   onClick={handleSaveFeedback}
-                  disabled={!feedbackText.trim() || isSavingFeedback}
+                  disabled={!feedbackText.trim() || rating === 0 || isSavingFeedback}
                   className="bg-gradient-primary"
                 >
                   {isSavingFeedback ? "Saving..." : "Save Feedback"}
@@ -312,6 +346,7 @@ export const BudgetResults = ({ criteria, onBack }: BudgetResultsProps) => {
                   onClick={() => {
                     setShowFeedbackForm(false);
                     setFeedbackText("");
+                    setRating(0);
                   }}
                 >
                   Cancel

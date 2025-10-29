@@ -52,7 +52,7 @@ export const useBudgetFeedback = (userId: string | undefined) => {
     }
   };
 
-  const saveFeedback = async (criteria: BudgetCriteria, feedbackText: string) => {
+  const saveFeedback = async (criteria: BudgetCriteria, feedbackText: string, rating?: number) => {
     if (!userId) {
       toast({
         title: "Authentication required",
@@ -69,6 +69,7 @@ export const useBudgetFeedback = (userId: string | undefined) => {
         user_id: userId,
         budget_data: criteria as any,
         feedback_text: feedbackText,
+        rating: rating,
       }]);
 
     setIsLoading(false);
