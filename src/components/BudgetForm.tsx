@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { Mic } from "lucide-react";
+import { useVoiceInput } from "@/hooks/useVoiceInput";
 
 interface BudgetCriteria {
   monthlyIncome: number;
@@ -42,6 +44,23 @@ export const BudgetForm = ({ onBudgetGenerated }: BudgetFormProps) => {
     }));
   };
 
+  const createVoiceHandler = (field: keyof BudgetCriteria) => {
+    return useVoiceInput((transcript: string) => {
+      const numbers = transcript.match(/\d+/g);
+      if (numbers && numbers.length > 0) {
+        updateCriteria(field, numbers.join(''));
+      }
+    });
+  };
+
+  const monthlyIncomeVoice = createVoiceHandler('monthlyIncome');
+  const tuitionVoice = createVoiceHandler('tuition');
+  const housingVoice = createVoiceHandler('housing');
+  const mealPlanVoice = createVoiceHandler('mealPlan');
+  const textbooksVoice = createVoiceHandler('textbooks');
+  const transportationVoice = createVoiceHandler('transportation');
+  const savingsGoalVoice = createVoiceHandler('savingsGoal');
+
   return (
     <Card className="shadow-soft">
       <CardHeader>
@@ -59,14 +78,24 @@ export const BudgetForm = ({ onBudgetGenerated }: BudgetFormProps) => {
               <Label htmlFor="income" className="text-base font-medium">
                 Monthly Income
               </Label>
-              <Input
-                id="income"
-                type="number"
-                placeholder="e.g., 1500"
-                value={criteria.monthlyIncome || ""}
-                onChange={(e) => updateCriteria("monthlyIncome", e.target.value)}
-                className="mt-1"
-              />
+              <div className="flex gap-2 mt-1">
+                <Input
+                  id="income"
+                  type="number"
+                  placeholder="e.g., 1500"
+                  value={criteria.monthlyIncome || ""}
+                  onChange={(e) => updateCriteria("monthlyIncome", e.target.value)}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={monthlyIncomeVoice.startListening}
+                  disabled={monthlyIncomeVoice.isListening}
+                >
+                  <Mic className={monthlyIncomeVoice.isListening ? "text-red-500" : ""} />
+                </Button>
+              </div>
               <p className="text-sm text-muted-foreground mt-1">
                 Include jobs, financial aid, family support
               </p>
@@ -79,56 +108,96 @@ export const BudgetForm = ({ onBudgetGenerated }: BudgetFormProps) => {
                 <Label htmlFor="housing" className="text-base font-medium">
                   Housing/Rent
                 </Label>
-                <Input
-                  id="housing"
-                  type="number"
-                  placeholder="e.g., 800"
-                  value={criteria.housing || ""}
-                  onChange={(e) => updateCriteria("housing", e.target.value)}
-                  className="mt-1"
-                />
+                <div className="flex gap-2 mt-1">
+                  <Input
+                    id="housing"
+                    type="number"
+                    placeholder="e.g., 800"
+                    value={criteria.housing || ""}
+                    onChange={(e) => updateCriteria("housing", e.target.value)}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={housingVoice.startListening}
+                    disabled={housingVoice.isListening}
+                  >
+                    <Mic className={housingVoice.isListening ? "text-red-500" : ""} />
+                  </Button>
+                </div>
               </div>
 
               <div>
                 <Label htmlFor="mealPlan" className="text-base font-medium">
                   Food/Meal Plan
                 </Label>
-                <Input
-                  id="mealPlan"
-                  type="number"
-                  placeholder="e.g., 300"
-                  value={criteria.mealPlan || ""}
-                  onChange={(e) => updateCriteria("mealPlan", e.target.value)}
-                  className="mt-1"
-                />
+                <div className="flex gap-2 mt-1">
+                  <Input
+                    id="mealPlan"
+                    type="number"
+                    placeholder="e.g., 300"
+                    value={criteria.mealPlan || ""}
+                    onChange={(e) => updateCriteria("mealPlan", e.target.value)}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={mealPlanVoice.startListening}
+                    disabled={mealPlanVoice.isListening}
+                  >
+                    <Mic className={mealPlanVoice.isListening ? "text-red-500" : ""} />
+                  </Button>
+                </div>
               </div>
 
               <div>
                 <Label htmlFor="textbooks" className="text-base font-medium">
                   Insurance
                 </Label>
-                <Input
-                  id="textbooks"
-                  type="number"
-                  placeholder="e.g., 100"
-                  value={criteria.textbooks || ""}
-                  onChange={(e) => updateCriteria("textbooks", e.target.value)}
-                  className="mt-1"
-                />
+                <div className="flex gap-2 mt-1">
+                  <Input
+                    id="textbooks"
+                    type="number"
+                    placeholder="e.g., 100"
+                    value={criteria.textbooks || ""}
+                    onChange={(e) => updateCriteria("textbooks", e.target.value)}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={textbooksVoice.startListening}
+                    disabled={textbooksVoice.isListening}
+                  >
+                    <Mic className={textbooksVoice.isListening ? "text-red-500" : ""} />
+                  </Button>
+                </div>
               </div>
 
               <div>
                 <Label htmlFor="transportation" className="text-base font-medium">
                   Transportation
                 </Label>
-                <Input
-                  id="transportation"
-                  type="number"
-                  placeholder="e.g., 100"
-                  value={criteria.transportation || ""}
-                  onChange={(e) => updateCriteria("transportation", e.target.value)}
-                  className="mt-1"
-                />
+                <div className="flex gap-2 mt-1">
+                  <Input
+                    id="transportation"
+                    type="number"
+                    placeholder="e.g., 100"
+                    value={criteria.transportation || ""}
+                    onChange={(e) => updateCriteria("transportation", e.target.value)}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={transportationVoice.startListening}
+                    disabled={transportationVoice.isListening}
+                  >
+                    <Mic className={transportationVoice.isListening ? "text-red-500" : ""} />
+                  </Button>
+                </div>
               </div>
             </div>
 
@@ -136,14 +205,24 @@ export const BudgetForm = ({ onBudgetGenerated }: BudgetFormProps) => {
               <Label htmlFor="savings" className="text-base font-medium">
                 Monthly Savings Goal
               </Label>
-              <Input
-                id="savings"
-                type="number"
-                placeholder="e.g., 200"
-                value={criteria.savingsGoal || ""}
-                onChange={(e) => updateCriteria("savingsGoal", e.target.value)}
-                className="mt-1"
-              />
+              <div className="flex gap-2 mt-1">
+                <Input
+                  id="savings"
+                  type="number"
+                  placeholder="e.g., 200"
+                  value={criteria.savingsGoal || ""}
+                  onChange={(e) => updateCriteria("savingsGoal", e.target.value)}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={savingsGoalVoice.startListening}
+                  disabled={savingsGoalVoice.isListening}
+                >
+                  <Mic className={savingsGoalVoice.isListening ? "text-red-500" : ""} />
+                </Button>
+              </div>
               <p className="text-sm text-muted-foreground mt-1">
                 How much you'd like to save each month
               </p>

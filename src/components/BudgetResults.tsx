@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, DollarSign, TrendingUp, AlertTriangle, MessageSquare, Star } from "lucide-react";
+import { ArrowLeft, DollarSign, TrendingUp, AlertTriangle, MessageSquare, Star, Mic } from "lucide-react";
 import { useBudgetFeedback } from "@/hooks/useBudgetFeedback";
 import { supabase } from "@/integrations/supabase/client";
+import { useVoiceInput } from "@/hooks/useVoiceInput";
 
 interface BudgetCriteria {
   monthlyIncome: number;
@@ -32,6 +33,10 @@ export const BudgetResults = ({ criteria, onBack }: BudgetResultsProps) => {
   const [hoveredRating, setHoveredRating] = useState<number>(0);
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const { saveFeedback, isLoading: isSavingFeedback } = useBudgetFeedback(userId);
+
+  const feedbackVoice = useVoiceInput((transcript: string) => {
+    setFeedbackText(prev => prev + (prev ? ' ' : '') + transcript);
+  });
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -321,14 +326,26 @@ export const BudgetResults = ({ criteria, onBack }: BudgetResultsProps) => {
               
               <div className="space-y-2">
                 <Label htmlFor="feedback">How is this budget working for you?</Label>
-                <Textarea
-                  id="feedback"
-                  placeholder="Share your thoughts... e.g., 'I need more for entertainment' or 'Savings goal is too high'"
-                  value={feedbackText}
-                  onChange={(e) => setFeedbackText(e.target.value)}
-                  rows={4}
-                  className="resize-none"
-                />
+                <div className="flex gap-2">
+                  <Textarea
+                    id="feedback"
+                    placeholder="Share your thoughts... e.g., 'I need more for entertainment' or 'Savings goal is too high'"
+                    value={feedbackText}
+                    onChange={(e) => setFeedbackText(e.target.value)}
+                    rows={4}
+                    className="resize-none"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={feedbackVoice.startListening}
+                    disabled={feedbackVoice.isListening}
+                    className="shrink-0"
+                  >
+                    <Mic className={feedbackVoice.isListening ? "text-red-500" : ""} />
+                  </Button>
+                </div>
                 <p className="text-sm text-muted-foreground">
                   Your feedback will help adjust recommendations for your next budget
                 </p>
