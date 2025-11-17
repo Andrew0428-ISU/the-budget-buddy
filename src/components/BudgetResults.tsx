@@ -24,9 +24,10 @@ interface BudgetCriteria {
 interface BudgetResultsProps {
   criteria: BudgetCriteria;
   onBack: () => void;
+  aiAdjustments?: any;
 }
 
-export const BudgetResults = ({ criteria, onBack }: BudgetResultsProps) => {
+export const BudgetResults = ({ criteria, onBack, aiAdjustments }: BudgetResultsProps) => {
   const [userId, setUserId] = useState<string | undefined>();
   const [feedbackText, setFeedbackText] = useState("");
   const [rating, setRating] = useState<number>(0);
@@ -61,17 +62,24 @@ export const BudgetResults = ({ criteria, onBack }: BudgetResultsProps) => {
   const recommendedSavings = Math.min(criteria.savingsGoal, remainingAfterFixed * 0.2);
   const availableForDiscretionary = remainingAfterFixed - recommendedSavings;
   
+  // Apply AI adjustments if available
+  const applyAdjustment = (baseAmount: number, category: string) => {
+    if (!aiAdjustments || !aiAdjustments[category]) return baseAmount;
+    const adjustmentPercent = aiAdjustments[category] / 100;
+    return Math.round(baseAmount * (1 + adjustmentPercent));
+  };
+
   // Budget categories with recommended amounts
   const budgetCategories = [
-    { name: "Housing/Rent", amount: criteria.housing, type: "fixed" as const },
-    { name: "Food/Meals", amount: criteria.mealPlan, type: "fixed" as const },
-    { name: "Insurance", amount: criteria.textbooks, type: "fixed" as const },
-    { name: "Transportation", amount: criteria.transportation, type: "fixed" as const },
-    { name: "Entertainment", amount: Math.round(availableForDiscretionary * 0.3), type: "flexible" as const },
-    { name: "Personal Care", amount: Math.round(availableForDiscretionary * 0.15), type: "flexible" as const },
-    { name: "Emergency Fund", amount: Math.round(availableForDiscretionary * 0.25), type: "flexible" as const },
-    { name: "Miscellaneous", amount: Math.round(availableForDiscretionary * 0.3), type: "flexible" as const },
-    { name: "Savings", amount: Math.round(recommendedSavings), type: "savings" as const },
+    { name: "Housing/Rent", amount: applyAdjustment(criteria.housing, "housing"), type: "fixed" as const },
+    { name: "Food/Meals", amount: applyAdjustment(criteria.mealPlan, "food"), type: "fixed" as const },
+    { name: "Insurance", amount: applyAdjustment(criteria.textbooks, "textbooks"), type: "fixed" as const },
+    { name: "Transportation", amount: applyAdjustment(criteria.transportation, "transportation"), type: "fixed" as const },
+    { name: "Entertainment", amount: applyAdjustment(Math.round(availableForDiscretionary * 0.3), "discretionary"), type: "flexible" as const },
+    { name: "Personal Care", amount: applyAdjustment(Math.round(availableForDiscretionary * 0.15), "discretionary"), type: "flexible" as const },
+    { name: "Emergency Fund", amount: applyAdjustment(Math.round(availableForDiscretionary * 0.25), "discretionary"), type: "flexible" as const },
+    { name: "Miscellaneous", amount: applyAdjustment(Math.round(availableForDiscretionary * 0.3), "discretionary"), type: "flexible" as const },
+    { name: "Savings", amount: applyAdjustment(Math.round(recommendedSavings), "savings"), type: "savings" as const },
   ];
 
   const totalBudgeted = budgetCategories.reduce((sum, cat) => sum + cat.amount, 0);
@@ -117,7 +125,14 @@ export const BudgetResults = ({ criteria, onBack }: BudgetResultsProps) => {
           <h2 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
             Your Personalized Budget
           </h2>
-          <p className="text-muted-foreground">Based on your monthly income of ${criteria.monthlyIncome}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-muted-foreground">Based on your monthly income of ${criteria.monthlyIncome}</p>
+            {aiAdjustments && (
+              <Badge variant="secondary" className="text-xs">
+                AI-Adjusted
+              </Badge>
+            )}
+          </div>
         </div>
       </div>
 
