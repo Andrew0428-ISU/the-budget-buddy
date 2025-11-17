@@ -23,6 +23,7 @@ interface BudgetFeedback {
 export const useBudgetFeedback = (userId: string | undefined) => {
   const [previousFeedback, setPreviousFeedback] = useState<BudgetFeedback | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [aiAdjustments, setAiAdjustments] = useState<any>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -91,10 +92,46 @@ export const useBudgetFeedback = (userId: string | undefined) => {
     }
   };
 
+  const analyzeAndAdjust = async (currentCriteria: BudgetCriteria) => {
+    if (!previousFeedback) return null;
+
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('analyze-budget-feedback', {
+        body: {
+          feedbackText: previousFeedback.feedback_text,
+          budgetData: previousFeedback.budget_data,
+          currentCriteria
+        }
+      });
+
+      setIsLoading(false);
+
+      if (error) {
+        console.error('Error analyzing feedback:', error);
+        toast({
+          title: "Could not apply feedback",
+          description: "Using standard budget calculations",
+          variant: "destructive"
+        });
+        return null;
+      }
+
+      setAiAdjustments(data.adjustments);
+      return data.adjustments;
+    } catch (error) {
+      setIsLoading(false);
+      console.error('Error in analyzeAndAdjust:', error);
+      return null;
+    }
+  };
+
   return {
     previousFeedback,
     isLoading,
     saveFeedback,
-    refetch: fetchLatestFeedback
+    refetch: fetchLatestFeedback,
+    analyzeAndAdjust,
+    aiAdjustments
   };
 };

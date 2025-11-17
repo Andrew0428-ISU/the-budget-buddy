@@ -1,0 +1,2 @@
+[function.analyze-budget-feedback]
+verify_jwt = false

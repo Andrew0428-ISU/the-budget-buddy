@@ -25,7 +25,8 @@ const Index = () => {
   const [budgetCriteria, setBudgetCriteria] = useState<BudgetCriteria | null>(null);
   const [user, setUser] = useState<any>(null);
   const [session, setSession] = useState<any>(null);
-  const { previousFeedback } = useBudgetFeedback(user?.id);
+  const [aiAdjustments, setAiAdjustments] = useState<any>(null);
+  const { previousFeedback, analyzeAndAdjust } = useBudgetFeedback(user?.id);
 
   useEffect(() => {
     // Set up auth state listener
@@ -45,13 +46,22 @@ const Index = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleBudgetGenerated = (criteria: BudgetCriteria) => {
+  const handleBudgetGenerated = async (criteria: BudgetCriteria) => {
     // Apply adjustments from previous feedback if available
     if (previousFeedback) {
       toast({
-        title: "Previous feedback applied",
-        description: "We've adjusted your budget based on your last feedback",
+        title: "Analyzing your feedback...",
+        description: "AI is adjusting your budget based on previous feedback",
       });
+      
+      const adjustments = await analyzeAndAdjust(criteria);
+      if (adjustments) {
+        setAiAdjustments(adjustments);
+        toast({
+          title: "Budget adjusted!",
+          description: adjustments.explanation || "Your budget has been personalized based on your feedback",
+        });
+      }
     }
     setBudgetCriteria(criteria);
   };
@@ -119,7 +129,11 @@ const Index = () => {
           </div>
         ) : (
           <div className="max-w-6xl mx-auto">
-            <BudgetResults criteria={budgetCriteria} onBack={handleBack} />
+            <BudgetResults 
+              criteria={budgetCriteria} 
+              onBack={handleBack}
+              aiAdjustments={aiAdjustments}
+            />
           </div>
         )}
       </main>
