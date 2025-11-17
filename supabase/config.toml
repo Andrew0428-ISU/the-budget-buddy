@@ -1,1 +1,4 @@
 project_id = "zziwmvvyfudetyqmpbcf"
+
+[functions.analyze-budget-feedback]
+verify_jwt = false
