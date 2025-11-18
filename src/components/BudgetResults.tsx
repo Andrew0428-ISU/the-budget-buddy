@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, DollarSign, TrendingUp, AlertTriangle, MessageSquare, Star, Mic } from "lucide-react";
+import { ArrowLeft, DollarSign, TrendingUp, AlertTriangle, MessageSquare, Star, Mic, Lightbulb } from "lucide-react";
 import { useBudgetFeedback } from "@/hooks/useBudgetFeedback";
 import { supabase } from "@/integrations/supabase/client";
 import { useVoiceInput } from "@/hooks/useVoiceInput";
@@ -91,6 +91,46 @@ export const BudgetResults = ({ criteria, onBack, aiAdjustments }: BudgetResults
     "Consider meal prepping to save on food costs",
     "Use campus resources like the gym instead of paid memberships"
   ];
+
+  const financialLiteracyTips = {
+    creditScores: [
+      "Your credit score ranges from 300-850. Pay bills on time and keep credit card balances under 30% to build good credit.",
+      "Late payments can stay on your credit report for 7 years. Set up automatic payments to never miss a due date.",
+      "Opening your first credit card? Use it for small purchases and pay it off monthly to build credit history.",
+      "Checking your own credit score doesn't hurt it. Monitor it regularly through free services like Credit Karma."
+    ],
+    studentLoans: [
+      "Federal student loans offer income-driven repayment plans. After graduation, you can adjust payments based on your income.",
+      "Don't borrow more than your expected first-year salary. This keeps student loan debt manageable after graduation.",
+      "Interest on federal student loans is usually lower than private loans. Always max out federal options first.",
+      "You have a 6-month grace period after graduation before loan payments start. Use this time to secure a job and budget."
+    ],
+    taxes: [
+      "As a student working part-time, you may get a tax refund. File your taxes even if income is low to claim it.",
+      "Keep receipts for textbooks and course materials. Education expenses may qualify for tax deductions or credits.",
+      "If parents claim you as a dependent, you can still file your own return to get refunds from your paychecks.",
+      "Use free tax software or campus resources. Students often qualify for free filing services."
+    ],
+    internships: [
+      "First paycheck smaller than expected? Taxes, Social Security, and Medicare are automatically deducted from your pay.",
+      "Set aside 20-30% of internship earnings for taxes if you're freelancing or doing contract work without automatic deductions.",
+      "Your first paycheck may be delayed 2-3 weeks due to pay periods. Budget accordingly when starting a new job.",
+      "Always fill out your W-4 form correctly. Too many allowances means less tax withheld but a bigger bill at tax time."
+    ]
+  };
+
+  // Select a random category and tip
+  const categories = Object.keys(financialLiteracyTips) as Array<keyof typeof financialLiteracyTips>;
+  const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+  const categoryTips = financialLiteracyTips[randomCategory];
+  const randomTip = categoryTips[Math.floor(Math.random() * categoryTips.length)];
+  
+  const categoryLabels = {
+    creditScores: "Credit Scores",
+    studentLoans: "Student Loans",
+    taxes: "Taxes",
+    internships: "Internships & Paychecks"
+  };
 
   const localRecommendations = {
     restaurants: [
@@ -269,6 +309,29 @@ export const BudgetResults = ({ criteria, onBack, aiAdjustments }: BudgetResults
           </CardContent>
         </Card>
       </div>
+
+      {/* Financial Literacy Micro-Lesson */}
+      <Card className="shadow-soft border-primary/20 bg-gradient-to-br from-background to-primary/5">
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Lightbulb className="h-5 w-5 text-primary" />
+            <CardTitle>💡 Financial Literacy Tip</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            <Badge variant="secondary" className="mb-2">
+              {categoryLabels[randomCategory]}
+            </Badge>
+            <p className="text-sm leading-relaxed">
+              {randomTip}
+            </p>
+            <p className="text-xs text-muted-foreground italic">
+              Refresh the page for a new tip!
+            </p>
+          </div>
+        </CardContent>
+      </Card>
 
       {budgetHealth === "warning" && (
         <Card className="border-destructive shadow-soft">
