@@ -93,16 +93,7 @@ export const useBudgetFeedback = (userId: string | undefined) => {
   };
 
   const analyzeAndAdjust = async (currentCriteria: BudgetCriteria) => {
-    if (!previousFeedback) {
-      console.log('No previous feedback to analyze');
-      return null;
-    }
-
-    console.log('Analyzing feedback:', {
-      feedbackText: previousFeedback.feedback_text,
-      budgetData: previousFeedback.budget_data,
-      currentCriteria
-    });
+    if (!previousFeedback) return null;
 
     setIsLoading(true);
     try {
@@ -114,35 +105,23 @@ export const useBudgetFeedback = (userId: string | undefined) => {
         }
       });
 
-      console.log('Edge function response:', { data, error });
-
       setIsLoading(false);
 
       if (error) {
         console.error('Error analyzing feedback:', error);
         toast({
           title: "Could not apply feedback",
-          description: error.message || "Using standard budget calculations",
+          description: "Using standard budget calculations",
           variant: "destructive"
         });
         return null;
       }
 
-      if (data?.adjustments) {
-        console.log('AI Adjustments received:', data.adjustments);
-        setAiAdjustments(data.adjustments);
-        return data.adjustments;
-      }
-
-      return null;
+      setAiAdjustments(data.adjustments);
+      return data.adjustments;
     } catch (error) {
       setIsLoading(false);
       console.error('Error in analyzeAndAdjust:', error);
-      toast({
-        title: "Error applying feedback",
-        description: error instanceof Error ? error.message : "Unknown error",
-        variant: "destructive"
-      });
       return null;
     }
   };
