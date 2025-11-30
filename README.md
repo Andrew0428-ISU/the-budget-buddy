@@ -6,6 +6,8 @@ URL: https://lovable.dev/projects/d3cbedd8-b1b1-4ff0-b858-862983de37d8
 
 Simply visit the [Lovable Project](https://lovable.dev/projects/d3cbedd8-b1b1-4ff0-b858-862983de37d8) and start prompting.
 
+Demo video: https://www.youtube.com/watch?v=eGT9CNDRVYI
+
 What technologies are used for this project?
 - Vite
 - TypeScript
