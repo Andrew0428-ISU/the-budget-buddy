@@ -71,7 +71,16 @@ const Index = () => {
   };
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
+    
+    // Clear local state regardless of server response
+    setSession(null);
+    setUser(null);
+    
+    if (error) {
+      console.error("Sign out error:", error);
+    }
+    
     toast({
       title: "Signed out",
       description: "You've been signed out successfully",
