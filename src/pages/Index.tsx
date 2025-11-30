@@ -80,11 +80,21 @@ const Index = () => {
   };
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    toast({
-      title: "Signed out",
-      description: "You've been signed out successfully",
-    });
+    try {
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.error('Sign out error:', error);
+    } finally {
+      // Clear local state regardless of API response
+      setUser(null);
+      setSession(null);
+      setBudgetCriteria(null);
+      setAiAdjustments(null);
+      toast({
+        title: "Signed out",
+        description: "You've been signed out successfully",
+      });
+    }
   };
 
   return (
