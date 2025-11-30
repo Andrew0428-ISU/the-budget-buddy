@@ -24,20 +24,39 @@ const Auth = () => {
   const [activeTab, setActiveTab] = useState("signin");
 
   useEffect(() => {
-    // Check if user is already logged in
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Only redirect if there's a valid session and user didn't explicitly navigate here
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        navigate("/");
+        // Give user a chance to see the page before redirecting
+        const timer = setTimeout(() => {
+          navigate("/");
+        }, 100);
+        return () => clearTimeout(timer);
       }
-    });
+    };
+    
+    checkSession();
   }, [navigate]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate inputs
+    const validation = loginSchema.safeParse({ email, password });
+    if (!validation.success) {
+      toast({
+        title: "Validation Error",
+        description: validation.error.errors[0].message,
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     const { error } = await supabase.auth.signUp({
-      email,
+      email: email.trim(),
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/`
@@ -57,6 +76,9 @@ const Auth = () => {
         title: "Success!",
         description: "Your account has been created. You can now log in.",
       });
+      // Switch to sign in tab
+      setActiveTab("signin");
+      setPassword(""); // Clear password for security
     }
   };
 
@@ -125,7 +147,23 @@ const Auth = () => {
               Sign in to your account or create a new one
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
+            <Button 
+              variant="outline" 
+              className="w-full"
+              onClick={async () => {
+                await supabase.auth.signOut();
+                setEmail("");
+                setPassword("");
+                toast({
+                  title: "Cleared",
+                  description: "All sessions have been cleared",
+                });
+              }}
+            >
+              Clear All Sessions
+            </Button>
+            
             <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="signin">Sign In</TabsTrigger>
