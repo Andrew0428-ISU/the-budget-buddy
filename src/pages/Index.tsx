@@ -47,14 +47,20 @@ const Index = () => {
   }, []);
 
   const handleBudgetGenerated = async (criteria: BudgetCriteria) => {
+    console.log('Budget generated with criteria:', criteria);
+    console.log('Previous feedback exists:', !!previousFeedback);
+    
     // Apply adjustments from previous feedback if available
     if (previousFeedback) {
+      console.log('Applying previous feedback:', previousFeedback);
       toast({
         title: "Analyzing your feedback...",
         description: "AI is adjusting your budget based on previous feedback",
       });
       
       const adjustments = await analyzeAndAdjust(criteria);
+      console.log('Adjustments result:', adjustments);
+      
       if (adjustments) {
         setAiAdjustments(adjustments);
         toast({
@@ -62,6 +68,9 @@ const Index = () => {
           description: adjustments.explanation || "Your budget has been personalized based on your feedback",
         });
       }
+    } else {
+      console.log('No previous feedback found, using standard calculations');
+      setAiAdjustments(null);
     }
     setBudgetCriteria(criteria);
   };
