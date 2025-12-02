@@ -6,7 +6,7 @@ URL: https://lovable.dev/projects/d3cbedd8-b1b1-4ff0-b858-862983de37d8
 
 Simply visit the [Lovable Project](https://lovable.dev/projects/d3cbedd8-b1b1-4ff0-b858-862983de37d8) and start prompting.
 
-Overview video: youtube.com/watch?v=7j5BvuBjPpo&feature=youtu.be
+Overview video: https://youtu.be/7j5BvuBjPpo?si=GTUeCDm6FjBXNCi3
 
 Demo video: https://www.youtube.com/watch?v=eGT9CNDRVYI
 
