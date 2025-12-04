@@ -10,6 +10,8 @@ Overview video: https://youtu.be/7j5BvuBjPpo?si=GTUeCDm6FjBXNCi3
 
 Demo video: https://www.youtube.com/watch?v=eGT9CNDRVYI
 
+15-min video presentation: https://www.youtube.com/watch?v=jyCNJctoNEk&t=390s
+
 What technologies are used for this project?
 - Vite
 - TypeScript
